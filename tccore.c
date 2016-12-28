@@ -609,26 +609,26 @@ static int net_setup(tccore_t *h)
             //}
 
             mc_loop = 1;
-            setsockopt(h->sockfd[i], IPPROTO_IP, IP_MULTICAST_LOOP, (char *)&mc_loop, sizeof(mc_loop));
-
-            if (h->task.rtp_header[i])
-            {
-                print_log("RTP", LOG_INFO, "index:%d, rtp header:%d, rtp ssrc:%d, rtp seq start:%d\n",
-                       i, h->task.rtp_header[i], h->task.rtp_ssrc[i], h->task.rtp_seq_start[i]);
-                h->rtp[i] = rtp_create(h->task.rtp_ssrc[i], h->task.rtp_seq_start[i], 33, 90000);
-                if (h->rtp[i] == NULL)
-                {
-                    print_log("TCCORE", LOG_ERROR, "rtp create failed!\n");
-                    return -1;
-                }
-            }
-        }
+            setsockopt(h->sockfd[i], IPPROTO_IP, IP_MULTICAST_LOOP, (char *)&mc_loop, sizeof(mc_loop));           
+        }        
         
         if (h->task.ttl > 0)
         {
             print_log("NET", LOG_INFO, "ttl:%d\n", h->task.ttl);
             if (setsockopt(h->sockfd[i], IPPROTO_IP, IP_MULTICAST_TTL, (char *)&h->task.ttl, sizeof(h->task.ttl)) < 0)
                 print_log("NET", LOG_ERROR, "set TTL FAILED! ttl value:%d\n", h->task.ttl);
+        }
+
+        if (h->task.rtp_header[i])
+        {
+            print_log("RTP", LOG_INFO, "index:%d, rtp header:%d, rtp ssrc:%d, rtp seq start:%d\n",
+                   i, h->task.rtp_header[i], h->task.rtp_ssrc[i], h->task.rtp_seq_start[i]);
+            h->rtp[i] = rtp_create(h->task.rtp_ssrc[i], h->task.rtp_seq_start[i], 33, 90000);
+            if (h->rtp[i] == NULL)
+            {
+                print_log("TCCORE", LOG_ERROR, "rtp create failed!\n");
+                return -1;
+            }
         }
     }
 
